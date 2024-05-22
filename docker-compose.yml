@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  wxboydb:
+    image: mongo
+    container_name: wxboydb
+    restart: always
+    ports:
+      - 27018:27017
+    volumes:
+      - ./wxboydb:/data/db
+    networks:
+      - wxboy_network # Specify the network for the 'mongo' service
+
+  scraper:
+    container_name: scraper
+    build:
+      context: .
+      dockerfile: dockerfile
+    restart: no
+    ports:
+      - "3001:3001"
+    networks:
+      - wxboy_network
+networks:
+  wxboy_network:
+    driver: bridge
