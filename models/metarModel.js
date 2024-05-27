@@ -7,7 +7,7 @@ const metarSchema = new mongoose.Schema({
     metar: String
 })
 
-// logbookSchema.index({ offBlock: 1, reg: 1 }, { unique: true })
-const metarEntry = mongoose.model('metar', metarSchema)
+metarSchema.index({airport: 1, metar: 1 },  { unique: true })
+const MetarEntry = mongoose.model('metar', metarSchema)
 
-module.exports = metarEntry;
+module.exports = MetarEntry;

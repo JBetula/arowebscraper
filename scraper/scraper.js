@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 // url = 'https://www.aro.lfv.se/Links/Link/ViewLink?TorLinkId=314&type=MET'
 metarUrl = 'https://www.aro.lfv.se/Links/Link/ViewLink?TorLinkId=300&type=MET'
 tafUrl = 'https://www.aro.lfv.se/Links/Link/ViewLink?TorLinkId=304&type=MET'
-
+notamURL ='https://www.aro.lfv.se/Links/Link/ViewLink?TorLinkId=159&type=AIS'
 
 // async function scrape() {
 const scrape = async () => {
@@ -37,14 +37,26 @@ const scrape = async () => {
             });
         });
 
+
+        await page.goto(notamURL)
+        const contentNotam = await page.content()
+        const notams = await page.evaluate(() => {
+            const notam = document.querySelector('pre.linkTextNormal');
+            return notam.textContent;
+        });
+        
+
+
         // console.log(metarData.find(data => data.airport === ""))
         // console.log(tafData.find(data => data.airport === ""))
 
         const completedData = {
             metar: metarData,
-            taf: tafData
+            taf: tafData,
+            notam:notams
         }
         browser.close()
+        // console.log(completedData)
         return completedData
 
     } catch (error) {
@@ -52,6 +64,7 @@ const scrape = async () => {
     }
 
 }
+scrape()
 
 // scrape().then(list => {
     // console.log(list)

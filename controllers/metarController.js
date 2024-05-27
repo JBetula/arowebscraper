@@ -1,34 +1,13 @@
-const LogbookEntry = require('../models/logbookModel');
+const MetarEntry = require('../models/metarModel')
 
-const toplist = async (req, res) => {
+const oneAirportGet = async (req, res) => {
+    const airportCode = "esNu"
+    const bigboy = await MetarEntry.find(
+        { airport: { $regex: new RegExp(`^${airportCode}$`, 'i') } }
 
-    const bigboy = await LogbookEntry.aggregate(
-        [{
-            $addFields: {
-                flightcrew:
-                    { $concatArrays: ['$flightcrew', ['$cmd']] }
-            }
-        },
-        { $unwind: '$flightcrew' }, {
-            $group: {
-
-                _id: "$flightcrew", totalTime:
-
-                    { $sum: "$blocktimeMinutes" }
-            }
-        },
-        {
-            $sort:
-                { totalTime: -1 }
-        }]
-    )
-
-
-    for (let index = 0; index < bigboy.length; index++) {
-        bigboy[index].totalTime = [Math.floor(bigboy[index].totalTime / 60), (bigboy[index].totalTime % 60)]
-        bigboy[index].rank = index + 1
-    }
+        )
+    console.log(bigboy)
     res.json(bigboy)
 }
 
-module.exports = { toplist, logbook, totalHours }
+module.exports = { oneAirportGet }

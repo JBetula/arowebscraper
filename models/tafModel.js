@@ -7,7 +7,7 @@ const tafSchema = new mongoose.Schema({
     taf: String
 })
 
-// logbookSchema.index({ offBlock: 1, reg: 1 }, { unique: true })
-const tafEntry = mongoose.model('taf', tafSchema)
+tafSchema.index({airport: 1, taf: 1 },  { unique: true })
+const TafEntry = mongoose.model('taf', tafSchema)
 
-module.exports = tafEntry;
+module.exports = TafEntry;
