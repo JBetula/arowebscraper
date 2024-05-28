@@ -1,5 +1,6 @@
 require("dotenv").config();
-const metarRoutes = require('./routes/metarRoutes.js');
+const metarRoutes = require('./routes/wxRoutes.js');
+const notamRoutes = require('./routes/notamRoutes.js');
 // const dataRoutes = require('./routes/dataRoutes.js');
 const { connectDB } = require('./db.js')
 
@@ -10,6 +11,8 @@ const app = express()
 
 app.use(express.json())
 app.use('/wx', metarRoutes)
+// app.use('/wx', tafRoutes)
+app.use('/notam', notamRoutes)
 // app.use('/', express.static('static'))
 
 console.log("server started")

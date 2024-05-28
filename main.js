@@ -3,7 +3,6 @@ const {scrape} = require('./scraper/scraper.js')
 const MetarEntry = require('./models/metarModel.js')
 const TafEntry = require('./models/tafModel.js')
 const NotamEntry = require('./models/notamModel.js')
-const {oneAirportGet} = require('./controllers/metarController.js')
 const {parseTextToJSON} = require('./parserNotam.js')
 
 
@@ -77,4 +76,3 @@ async function saveNotamToDB(airport, notam) {
 
 connectDB()
 getWx()
-// oneAirportGet()
