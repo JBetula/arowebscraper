@@ -28,6 +28,7 @@ COPY . /home/app
 RUN yarn 
 
 EXPOSE 4000
+EXPOSE 4001
 
 # Give app user access to all the project folder
 RUN chown -R app:app /home/app

@@ -1,9 +1,11 @@
 function parseTextToJSON(text) {
+    console.log(text)
 
     const text2 = removeBeforeMarker(text)
     const text3= removeAfterWord(text2)
+    const text4= removeContinueOnNextPage(text3)
     const entries = {};
-    const parts = text3.split(/>>>(.+?)<<<\s+/).filter(Boolean);
+    const parts = text4.split(/>>>(.+?)<<<\s+/).filter(Boolean);
     for (let i = 0; i < parts.length; i += 2) {
         const key = parts[i].trim().substring(0, 4);
         let entryContent = parts[i + 1].trim();
@@ -40,6 +42,13 @@ function removeAfterWord(str, word = "EN-ROUTE") {
         return str;
     }
 }
+
+function removeContinueOnNextPage(str) {
+
+        const unwantedTextRegex = /CONTINUES ON NEXT PAGE\s*.+PAGE: \d+\(\d+\)/g;
+        return str.replace(unwantedTextRegex, '').trim();
+    } 
+
 
 // Example usage
 // const inputString = "Some text before>>>> And some more text>>> This is the text we want to keep.";

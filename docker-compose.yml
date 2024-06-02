@@ -19,7 +19,7 @@ services:
       dockerfile: dockerfile
     restart: no
     ports:
-      - "3001:3001"
+      - "4001:4001"
     networks:
       - wxboy_network
 networks:
