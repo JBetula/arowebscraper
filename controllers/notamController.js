@@ -8,7 +8,7 @@ const getNotam = async (req, res) => {
     const bigboy = await NotamEntry.find(
         { airport: { $in: airportCodes.map(code => new RegExp(`^${code}$`, 'i')) } }
     );
-    
+
     console.log(bigboy)
     res.json(bigboy)
 }

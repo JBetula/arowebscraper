@@ -1,5 +1,4 @@
 function parseTextToJSON(text) {
-    console.log(text)
 
     const text2 = removeBeforeMarker(text)
     const text3= removeAfterWord(text2)
