@@ -6,6 +6,8 @@ const tafController = require('../controllers/tafController');
 
 router.get('/taf', tafController.getTAF);
 router.get('/metar', metarController.getMetar);
-router.get('/allmetar', metarController.getAllMetar);
+router.get('/manymetar', metarController.getManyMetar);
+router.get('/allmetar', metarController.getAllAirports);
+router.get('/all', metarController.all);
 
 module.exports = router;

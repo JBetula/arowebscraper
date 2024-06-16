@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const notamSchema = new mongoose.Schema({
+    //TODO change order of valid
     airport: String,
     notam: String,
     validto: {

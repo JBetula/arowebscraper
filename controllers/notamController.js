@@ -10,7 +10,7 @@ const getNotam = async (req, res) => {
     );
 
     console.log(bigboy)
-    res.json(bigboy)
+    res.status(200).json(bigboy)
 }
 
 module.exports = { getNotam }

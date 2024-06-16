@@ -1,4 +1,6 @@
 const MetarEntry = require('../models/metarModel')
+const TafEntry = require('../models/tafModel')
+
 
 const getMetar = async (req, res) => {
     console.log(req.query.airport)
@@ -38,7 +40,7 @@ const getMetar = async (req, res) => {
     res.json(bigboy)
 }
 
-const getAllMetar = async (req, res) => {
+const getManyMetar = async (req, res) => {
     console.log(req.query.airport)
     const airports = req.query.airport;
     // Ensure airports is an array
@@ -50,13 +52,135 @@ const getAllMetar = async (req, res) => {
             }
         },
         {
-            $sort: { _id: -1 } 
+            $sort: { _id: -1 }
         }
-      
-    ]).limit(10);
-    
+
+    ]).limit(20);
+
     console.log(bigboy)
     res.json(bigboy)
 }
 
-module.exports = { getMetar, getAllMetar }
+const getAllAirports = async (req, res) => {
+    const biggus = await MetarEntry.aggregate([
+        // {
+        //     // Convert _id to a date object assuming it's in ObjectId format
+        //     // $addFields: {
+        //         // createdAt: { $toDate: "$_id" }
+        //     // }
+        // },
+        {
+            // Sort documents by airport and createdAt in descending order
+            $sort: {
+                airport: 1,
+                // _id:-1,
+                // createdAt: -1
+            }
+        },
+        {
+            // Group by airport and get the first document in each group
+            $group: {
+                _id: "$airport",
+                latestEntry: { $first: "$$ROOT" }
+            }
+        },
+        {
+            // Replace the root document with the latest entry
+            $replaceRoot: {
+                newRoot: "$latestEntry"
+            }
+        },
+        {
+            // Project only the desired fields
+            $project: {
+                airport: 1,
+                metar: 1,
+                _id: 0,
+            }
+        }
+    ]);
+    console.log(biggus)
+    res.json(biggus)
+}
+
+
+const all = async (req, res) => {
+    const biggus = await MetarEntry.aggregate([
+        {
+            $sort: {
+                airport: 1,
+                _id: -1,
+            }
+        },
+        {
+            $group: {
+                _id: "$airport",
+                latestEntry: { $first: "$$ROOT" }
+            }
+        },
+        {
+            $replaceRoot: {
+                newRoot: "$latestEntry"
+            }
+        },
+        {
+            $project: {
+                airport: 1,
+                metar: 1,
+                _id: 0,
+            }
+        },
+    ]);
+
+    const dickus = await TafEntry.aggregate([
+        {
+            $sort: {
+                airport: 1,
+                _id:-1,
+            }
+        },
+        {
+            $group: {
+                _id: "$airport",
+                latestEntry: { $first: "$$ROOT" }
+            }
+        },
+        {
+            $replaceRoot: {
+                newRoot: "$latestEntry"
+            }
+        },
+        {
+            $project: {
+                airport: 1,
+                taf: 1,
+                _id: 0,
+            }
+        },
+
+    ]);
+    // console.log(biggus[2].metar)
+    const metarMap = Object.fromEntries(biggus.map(entry => [entry.airport, entry]));
+    const tafMap = Object.fromEntries(dickus.map(entry => [entry.airport, entry]));
+
+    const combinedResults = [];
+
+    // Combine metar and taf entries based on airport
+    new Set([...Object.keys(metarMap), ...Object.keys(tafMap)]).forEach(airport => {
+        combinedResults.push({
+            airport,
+            metar: metarMap[airport] ? metarMap[airport].metar : null,
+            taf: tafMap[airport] ? tafMap[airport].taf : null
+        });
+    });
+
+
+
+    // console.log(combinedResults)
+    res.json(combinedResults)
+    }
+
+
+
+
+module.exports = { getMetar, getManyMetar, getAllAirports, all }

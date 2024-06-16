@@ -4,32 +4,11 @@ const MetarEntry = require('./models/metarModel.js')
 const TafEntry = require('./models/tafModel.js')
 const NotamEntry = require('./models/notamModel.js')
 const { parseTextToJSON } = require('./parserNotam.js')
+const cron = require('node-cron');
 
 
 
 
-const getWx = async () => {
-    try {
-        const list = await scrape();
-        list.metar.forEach(e => {
-            saveMetarToDB(e.airport, e.wx)
-        })
-        list.taf.forEach(e => {
-            saveTafToDB(e.airport, e.wx)
-        })
-        const bigboy = parseTextToJSON(list.notam)
-        for (const key of Object.keys(bigboy)) {
-            console.log(key)
-            // Insert each entry corresponding to the key into the database
-            for (const entry of bigboy[key]) {
-                saveNotamToDB(key, entry)
-                // await collection.insertOne({ key, entry });
-            }
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
 
 async function saveTafToDB(airport, wx) {
     const entry = new TafEntry({
@@ -104,4 +83,30 @@ function parseDate(dateString) {
 }
 
 connectDB()
-getWx()
+console.log("next is getWX")
+
+
+cron.schedule('*/30 * * * *', async () => {
+// cron.schedule('*/3 * * * *', async () => {
+    console.log("getWx is running")
+    try {
+        const list = await scrape();
+        list.metar.forEach(e => {
+            saveMetarToDB(e.airport, e.wx)
+        })
+        list.taf.forEach(e => {
+            saveTafToDB(e.airport, e.wx)
+        })
+        const bigboy = parseTextToJSON(list.notam)
+        for (const key of Object.keys(bigboy)) {
+            console.log(key)
+            // Insert each entry corresponding to the key into the database
+            for (const entry of bigboy[key]) {
+                saveNotamToDB(key, entry)
+                // await collection.insertOne({ key, entry });
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+})
